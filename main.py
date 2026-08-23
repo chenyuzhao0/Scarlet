@@ -4,12 +4,12 @@ import queue
 from audio_engine import start_audio_listener
 
 def main():
-
     current_state = State.STANDBY
     event_queue = queue.Queue()
 
     stream = start_audio_listener(event_queue)
-    print("Scarlet is in STANDBY. Speak into your microphone to wake her up...")
+    print("--- Scarlet Voice Assistant ---")
+    print("Status: STANDBY (Speak into your mic to activate)\n")
 
     try:
         while current_state != State.SHUTDOWN:
@@ -28,6 +28,11 @@ def main():
             elif current_state == State.PROCESSING:
                 print("Scarlet: Processing your request...")
                 time.sleep(2)
+                while not event_queue.empty():
+                    try:
+                        event_queue.get_nowait()
+                    except queue.Empty:
+                        break
                 current_state = State.STANDBY
                 print("\nScarlet is back in STANDBY.")
 
